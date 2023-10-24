@@ -3,8 +3,8 @@
 #include "parser.h"
 #include "lexer.h"
 #include "ast.h"
-#include "symtab.h"
-#include "scope_check.h"
+//#include "symtab.h"
+//#include "scope_check.h"
 #include "utilities.h"
 #include "unparser.h"
 
@@ -33,11 +33,11 @@ int main(int argc, char *argv[])
 
     // unparse to check on the AST
     unparseProgram(stdout, progast);
-
-    // building symbol table
-    symtab_initialize();
-    // check for duplicate declarations
-    scope_check_program(progast);
+    
+    // // building symbol table
+    // symtab_initialize();
+    // // check for duplicate declarations
+    // scope_check_program(progast);
 
     return EXIT_SUCCESS;
 }
