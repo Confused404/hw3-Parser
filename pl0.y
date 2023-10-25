@@ -123,10 +123,10 @@ block :
         { $$ = ast_block($1, $2, $3, $4)};
 
 constDecls : 
-    /* empty */     
+    empty   
         { $$ = ast_const_decls_empty($1); } 
-    | constDecl*      
-        { $$ = ast_const_decls(); }   /* not sure what to put here or if '*' is right */
+    | constDecls constDecl      
+        { $$ = ast_const_decls($1, $2); }   
     ;  
 
 constDecl : 
@@ -147,10 +147,10 @@ constDef  :
     ;
 
 varDecls :
-    /* empty */     
+    empty     
         { $$ = ast_var_decls_empty($1); }
-    | varDecl*        
-        { $$ = ast_var_decls(); }      /* not sure what to put here */
+    | varDecls varDecl        
+        { $$ = ast_var_decls($1, $2); }      
     ;
 
 varDecl : 
@@ -166,10 +166,10 @@ idents  :
     ;
 
 procDecls :
-    /* empty */     
+    empty      
         { $$ = ast_proc_decls_empty($1); }
-    | proc_decl*      
-        { $$ = ast_proc_decls(); }     /* not sure what to put here */
+    | procDecls procDecl    
+        { $$ = ast_proc_decls($1, $2); }     
     ;
 
 procDecl : 
@@ -235,7 +235,6 @@ skipStmt :
     "skip" 
         { $$ = ast_skip_stmt(ast_file_loc(t)); } 
     ; 
-                                    /* ^^ could be wrong, need to confirm ^^ */
 
 stmts : 
     stmt 
@@ -243,7 +242,6 @@ stmts :
     | stmts ";" stmt 
         { $$ = ast_stmts($1, $3); } 
     ;
-
 
 condition : 
     oddCondition 
@@ -264,57 +262,53 @@ relOpCondition :
 
 relOp :
     "="
-        { $$ = $1; }                    /* << could be wrong */
     | "<>"
-        { $$ = $1; }
     | "<"
-        { $$ = $1; }
     | "<="
-        { $$ = $1; }
     | ">"
-        { $$ = $1; }
     | ">="
-        { $$ = $1; }
     ;
 
 expr :
     term
-        { $$ = ; }
-    | expr "+" term                     /* not sure what function to use */
-        { $$ = ; }
+
+    | expr "+" term                
+        { $$ = ast_expr_binary_op(ast_binary_op_expr($1, $2, $3)); }
     | expr "-" term
-        { $$ = ; }
+        { $$ = ast_expr_binary_op(ast_binary_op_expr($1, $2, $3)); }
     ;
 
 term : 
     factor 
-        { $$ = ; } 
-    | term "*" factor                   /* not sure what function to use */
-        { $$ = ; } 
+        
+    | term "*" factor
+        { $$ = ast_expr_binary_op(ast_binary_op_expr($1, $2, $3)); } 
     | term "/" factor 
-        { $$ = ; } 
+        { $$ = ast_expr_binary_op(ast_binary_op_expr($1, $2, $3)); } 
     ;
 
 factor : 
     ident 
         { $$ = ast_idents_singleton($1); } 
     | sign number 
-        { $$ = ast_expr_pos_number($1, $2); } 
+        { $$ = ast_expr_pos_number($1, $2); }  /* what about ast_expr_negated_number? */
+    | sign number
+        { $$ = ast_expr_negated_number($1, $2); }
     | "(" expr ")" 
         { $$ = ast_expr_binary_op($2); } 
     ;
                                                 /* ^^ functions could be wrong ^^ */
 
 sign :  
-    "+" 
-        { $$ = $1; }                            /* << could be wrong */
-    | "-" 
-        { $$ = $1; } 
-    | empty 
-        { $$ = $1; } 
+    "+"
+    | "-"
+    | empty  
     ;
 
 empty : 
+    %empty
+        { $$ = ast_empty(ast_file_loc(t)); }
+    ;
 
 
 
