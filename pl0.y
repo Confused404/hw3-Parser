@@ -114,62 +114,206 @@ extern void setProgAST(block_t t);
 %%
  /* Write your grammar rules below and before the next %% */
 
-program : block "." { setProgAST($1); } ;
+program : 
+    block "." 
+        { setProgAST($1); } ;
 
-block : constDecls varDecls procDecls stmt { $$ = ast_block($1, $2, $3, $4)};
+block : 
+    constDecls varDecls procDecls stmt 
+        { $$ = ast_block($1, $2, $3, $4)};
 
 constDecls : 
-    /* empty */     { $$ = ast_const_decls_empty($1); } 
-    |
-    constDecl*      { $$ = ast_const_decls(); }   /* not sure what to put here or if '*' is right */
+    /* empty */     
+        { $$ = ast_const_decls_empty($1); } 
+    | constDecl*      
+        { $$ = ast_const_decls(); }   /* not sure what to put here or if '*' is right */
     ;  
-constDecl : "const" constDefs ";" { $$ = ast_const_decl($2); } ;
-constDefs : constDef {$$ = ast_const_defs_singleton($1);} | constDefs "," constdef {$$ = ast_const_defs($1, $3);} ;
-constDef  : identsym "=" numbersym {$$ = ast_const_def($1, $3);} ;
+
+constDecl : 
+    "const" constDefs ";" 
+        { $$ = ast_const_decl($2); } 
+    ;
+
+constDefs : 
+    constDef 
+        {$$ = ast_const_defs_singleton($1);} 
+    | constDefs "," constdef 
+        {$$ = ast_const_defs($1, $3);} 
+    ;
+
+constDef  : 
+    identsym "=" numbersym 
+        {$$ = ast_const_def($1, $3);} 
+    ;
 
 varDecls :
-    /* empty */     { $$ = ast_var_decls_empty($1); }
-    |
-    varDecl*        { $$ = ast_var_decls(); }      /* not sure what to put here */
+    /* empty */     
+        { $$ = ast_var_decls_empty($1); }
+    | varDecl*        
+        { $$ = ast_var_decls(); }      /* not sure what to put here */
     ;
-varDecl : "var" idents ";" { $$ = ast_var_decl($2); } ;
-idents  : ident { $$ = ast_idents_singleton($1); } | idents "," ident { $$ = ast_idents($1, $3); } ;
+
+varDecl : 
+    "var" idents ";" 
+        { $$ = ast_var_decl($2); } 
+    ;
+
+idents  : 
+    ident 
+        { $$ = ast_idents_singleton($1); } 
+    | idents "," ident 
+        { $$ = ast_idents($1, $3); } 
+    ;
 
 procDecls :
-    /* empty */     { $$ = ast_proc_decls_empty($1); }
-    |
-    proc_decl*      { $$ = ast_proc_decls(); }     /* not sure what to put here */
+    /* empty */     
+        { $$ = ast_proc_decls_empty($1); }
+    | proc_decl*      
+        { $$ = ast_proc_decls(); }     /* not sure what to put here */
     ;
-procDecl : "procedure" ident ";" block ";" { $$ = ast_proc_decl($2, $4); } ;
 
-stmt : 
-    assignStmt { $$ = ast_stmt_assign($1); } | callStmt { $$ = ast_stmt_call($1); } 
-    | beginStmt { $$ = ast_stmt_begin($1); } | ifStmt { $$ = ast_stmt_if($1); } | whileStmt { $$ = ast_stmt_while($1); } 
-    | readStmt { $$ = ast_stmt_read($1); } | writeStmt { $$ = ast_stmt_write($1); } | skipStmt { $$ = ast_stmt_skip($1); }
+procDecl : 
+    "procedure" ident ";" block ";" 
+        { $$ = ast_proc_decl($2, $4); } 
     ;
-assignStmt : ident ":=" expr { $$ = ast_assign_stmt($1, $3); } ;
-callStmt : "call" ident { $$ = ast_call_stmt($2); } ;
-beginStmt : "begin" stmts "end" { $$ = ast_begin_stmt($2); } ;
-ifStmt : "if" condition "then" stmt "else" stmt { $$ = ast_if_stmt($2, $4, $6); } ;
-whileStmt : "while" condition "do" stmt { $$ = ast_while_stmt($2, $4); } ;
-readStmt : "read" ident { $$ = ast_read_stmt($2); } ;
-writeStmt : "write" expr { $$ = ast_write_stmt($2); } ;
-skipStmt : "skip" { $$ = ast_skip_stmt(ast_file_loc(t)); } ; /* could be wrong, need to confirm */
-stmts : stmt { $$ = ast_stmts_singleton($1); } | stmts ";" stmt { $$ = ast_stmts($1, $3); } ;
+ 
+stmt : 
+    assignStmt 
+        { $$ = ast_stmt_assign($1); } 
+    | callStmt 
+        { $$ = ast_stmt_call($1); } 
+    | beginStmt 
+        { $$ = ast_stmt_begin($1); } 
+    | ifStmt 
+        { $$ = ast_stmt_if($1); } 
+    | whileStmt 
+        { $$ = ast_stmt_while($1); } 
+    | readStmt 
+        { $$ = ast_stmt_read($1); } 
+    | writeStmt 
+        { $$ = ast_stmt_write($1); } 
+    | skipStmt 
+        { $$ = ast_stmt_skip($1); }
+    ;
+
+assignStmt : 
+    ident ":=" expr 
+        { $$ = ast_assign_stmt($1, $3); } 
+    ;
+
+callStmt : 
+    "call" ident 
+        { $$ = ast_call_stmt($2); } 
+    ;
+
+beginStmt : 
+    "begin" stmts "end" 
+        { $$ = ast_begin_stmt($2); } 
+    ;
+
+ifStmt : 
+    "if" condition "then" stmt "else" stmt 
+        { $$ = ast_if_stmt($2, $4, $6); } 
+    ;
+
+whileStmt : 
+    "while" condition "do" stmt 
+        { $$ = ast_while_stmt($2, $4); } 
+    ;
+
+readStmt : 
+    "read" ident 
+        { $$ = ast_read_stmt($2); } 
+    ;
+
+writeStmt : 
+    "write" expr 
+        { $$ = ast_write_stmt($2); } 
+    ;
+
+skipStmt : 
+    "skip" 
+        { $$ = ast_skip_stmt(ast_file_loc(t)); } 
+    ; 
+                                    /* ^^ could be wrong, need to confirm ^^ */
+
+stmts : 
+    stmt 
+        { $$ = ast_stmts_singleton($1); } 
+    | stmts ";" stmt 
+        { $$ = ast_stmts($1, $3); } 
+    ;
+
 
 condition : 
+    oddCondition 
+        { $$ = ast_condition_odd($1); }
+    | relOpCondition
+        { $$ = ast_condition_rel($1); }
+    ;
+
 oddCondition : 
+    "odd" expr  
+        { $$ = ast_odd_condition($2); }
+    ;
+
 relOpCondition :
+    expr relOp expr
+        { $$ = ast_rel_op_condition($1, $2, $3); }
+    ;
+
 relOp :
+    "="
+        { $$ = $1; }                    /* << could be wrong */
+    | "<>"
+        { $$ = $1; }
+    | "<"
+        { $$ = $1; }
+    | "<="
+        { $$ = $1; }
+    | ">"
+        { $$ = $1; }
+    | ">="
+        { $$ = $1; }
+    ;
 
 expr :
-term : factor { $$ = ; } | term "*" factor  { $$ = ; } | term "/" factor { $$ = ; } ;
-factor : 
-    ident { $$ = ast_idents_singleton($1); } 
-    | sign number { $$ = ast_expr_pos_number($1, $2); } /* could be wrong */
-    | "(" expr ")" { $$ = ast_expr_binary_op($2); }     /* could be wrong */
+    term
+        { $$ = ; }
+    | expr "+" term                     /* not sure what function to use */
+        { $$ = ; }
+    | expr "-" term
+        { $$ = ; }
     ;
-sign :  "+" { $$ = $1; } | "-" { $$ = $1; } | empty { $$ = $1; } ;
+
+term : 
+    factor 
+        { $$ = ; } 
+    | term "*" factor                   /* not sure what function to use */
+        { $$ = ; } 
+    | term "/" factor 
+        { $$ = ; } 
+    ;
+
+factor : 
+    ident 
+        { $$ = ast_idents_singleton($1); } 
+    | sign number 
+        { $$ = ast_expr_pos_number($1, $2); } 
+    | "(" expr ")" 
+        { $$ = ast_expr_binary_op($2); } 
+    ;
+                                                /* ^^ functions could be wrong ^^ */
+
+sign :  
+    "+" 
+        { $$ = $1; }                            /* << could be wrong */
+    | "-" 
+        { $$ = $1; } 
+    | empty 
+        { $$ = $1; } 
+    ;
+
 empty : 
 
 
