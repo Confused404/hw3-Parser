@@ -137,7 +137,7 @@ constDecl :
 constDefs : 
     constDef 
         {$$ = ast_const_defs_singleton($1);} 
-    | constDefs "," constdef 
+    | constDefs "," constDef 
         {$$ = ast_const_defs($1, $3);} 
     ;
 
@@ -159,9 +159,9 @@ varDecl :
     ;
 
 idents  : 
-    ident 
+    identsym 
         { $$ = ast_idents_singleton($1); } 
-    | idents "," ident 
+    | idents "," identsym 
         { $$ = ast_idents($1, $3); } 
     ;
 
@@ -173,7 +173,7 @@ procDecls :
     ;
 
 procDecl : 
-    "procedure" ident ";" block ";" 
+    "procedure" identsym ";" block ";" 
         { $$ = ast_proc_decl($2, $4); } 
     ;
  
@@ -197,12 +197,12 @@ stmt :
     ;
 
 assignStmt : 
-    ident ":=" expr 
+    identsym ":=" expr 
         { $$ = ast_assign_stmt($1, $3); } 
     ;
 
 callStmt : 
-    "call" ident 
+    "call" identsym
         { $$ = ast_call_stmt($2); } 
     ;
 
@@ -222,7 +222,7 @@ whileStmt :
     ;
 
 readStmt : 
-    "read" ident 
+    "read" identsym
         { $$ = ast_read_stmt($2); } 
     ;
 
@@ -288,15 +288,10 @@ term :
     ;
 
 factor : 
-    ident 
+    identsym 
         { $$ = ast_idents_singleton($1); } 
-    | sign number 
-        { 
-            if($1 == '+')
-                $$ = ast_expr_pos_number($1, $2); 
-            else
-                $$ = ast_expr_negated_number($1, $2);
-        }                                           /* what about ast_expr_negated_number? how will it tell which one to use? */
+    | sign numbersym 
+        { $$ = ast_expr_pos_number($1, $2); }   /* what about ast_expr_negated_number? how will it tell which one to use? */
     | "(" expr ")" 
         { $$ = ast_expr_binary_op($2); } 
     ;
