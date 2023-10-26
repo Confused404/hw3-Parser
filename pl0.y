@@ -291,9 +291,12 @@ factor :
     ident 
         { $$ = ast_idents_singleton($1); } 
     | sign number 
-        { $$ = ast_expr_pos_number($1, $2); }  /* what about ast_expr_negated_number? */
-    | sign number
-        { $$ = ast_expr_negated_number($1, $2); }
+        { 
+            if($1 == '+')
+                $$ = ast_expr_pos_number($1, $2); 
+            else
+                $$ = ast_expr_negated_number($1, $2);
+        }                                           /* what about ast_expr_negated_number? how will it tell which one to use? */
     | "(" expr ")" 
         { $$ = ast_expr_binary_op($2); } 
     ;
