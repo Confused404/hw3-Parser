@@ -233,7 +233,7 @@ writeStmt :
 
 skipStmt : 
     "skip" 
-        { $$ = ast_skip_stmt(file_location_make(lexer_filename(), lexer_line())); }   /* dont know how to access file location */
+        { $$ = ast_skip_stmt(file_location_make(lexer_filename(), lexer_line())); }
     ; 
 
 stmts : 
@@ -299,7 +299,6 @@ factor :
     | "(" expr ")" 
         { $$ = $2; }                 
     ;
-        /*  ( expr) function could be wrong */
 
 
 posSign :
@@ -309,7 +308,7 @@ posSign :
 
 empty : 
     %empty
-        { $$ = ast_empty(file_location_make(lexer_filename(), lexer_line())); } /* dont know how to access file location */
+        { $$ = ast_empty(file_location_make(lexer_filename(), lexer_line())); }
     ;
 
 
