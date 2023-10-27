@@ -96,6 +96,7 @@ extern void yyerror(const char *filename, const char *msg);
 %type <expr> term
 %type <expr> factor
 %type <token> posSign
+%type <token> negSign
 
 %start program
 
@@ -120,7 +121,7 @@ program :
 
 block : 
     constDecls varDecls procDecls stmt 
-        { $$ = ast_block($1, $2, $3, $4)};
+        { $$ = ast_block($1, $2, $3, $4); } ;
 
 constDecls : 
     empty   
@@ -233,7 +234,7 @@ writeStmt :
 
 skipStmt : 
     "skip" 
-        { $$ = ast_skip_stmt(ast_file_loc(t)); } 
+        { $$ = ast_skip_stmt(ast_file_loc()); }   /* dont know how to access file location */
     ; 
 
 stmts : 
@@ -287,25 +288,28 @@ term :
         { $$ = ast_expr_binary_op(ast_binary_op_expr($1, $2, $3)); } 
     ;
 
+
+
 factor : 
     identsym 
         { $$ = ast_idents_singleton($1); } 
-    | sign numbersym 
-        { $$ = ast_expr_pos_number($1, $2); }   /* what about ast_expr_negated_number? how will it tell which one to use? */
+    | "-" numbersym 
+        { $$ = ast_expr_negated_number($1, $2); }
+    | posSign numbersym
+        { $$ = ast_expr_pos_number($1, $2); }   
     | "(" expr ")" 
-        { $$ = ast_expr_binary_op($2); } 
+        { $$ = ast_expr_binary_op($2); }  /* << function could be wrong */
     ;
-                                                /* ^^ functions could be wrong ^^ */
 
-sign :  
+
+posSign :
     "+"
-    | "-"
-    | empty  
+    | empty
     ;
 
 empty : 
     %empty
-        { $$ = ast_empty(ast_file_loc(t)); }
+        { $$ = ast_empty(ast_file_loc()); } /* dont know how to access file location */
     ;
 
 
