@@ -291,7 +291,7 @@ term :
 
 factor : 
     identsym
-
+        { $$ = ast_expr_ident($1); }
     | "-" numbersym 
         { $$ = ast_expr_negated_number($1, $2); }
     | posSign numbersym
@@ -303,7 +303,7 @@ factor :
 
 posSign :
     "+"
-    /* do i need an empty here? */
+      //| empty { $$ = ; }/* do i need an empty here? */
     ;
 
 empty : 
