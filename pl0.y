@@ -96,7 +96,6 @@ extern void yyerror(const char *filename, const char *msg);
 %type <expr> term
 %type <expr> factor
 %type <token> posSign
-%type <token> negSign
 
 %start program
 
@@ -234,7 +233,7 @@ writeStmt :
 
 skipStmt : 
     "skip" 
-        { $$ = ast_skip_stmt(ast_file_loc()); }   /* dont know how to access file location */
+        { $$ = ast_skip_stmt(file_location_make(lexer_filename(), lexer_line())); }   /* dont know how to access file location */
     ; 
 
 stmts : 
@@ -292,14 +291,15 @@ term :
 
 factor : 
     identsym 
-        { $$ = ast_idents_singleton($1); } 
+                                             /* { $$ = ast_idents_singleton($1); } */
     | "-" numbersym 
         { $$ = ast_expr_negated_number($1, $2); }
     | posSign numbersym
         { $$ = ast_expr_pos_number($1, $2); }   
     | "(" expr ")" 
-        { $$ = ast_expr_binary_op($2); }  /* << function could be wrong */
+        { $$ = ast_odd_condition($2); }                 
     ;
+        /*  ( expr) function could be wrong */
 
 
 posSign :
@@ -309,7 +309,7 @@ posSign :
 
 empty : 
     %empty
-        { $$ = ast_empty(ast_file_loc()); } /* dont know how to access file location */
+        { $$ = ast_empty(file_location_make(lexer_filename(), lexer_line())); } /* dont know how to access file location */
     ;
 
 

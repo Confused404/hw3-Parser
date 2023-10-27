@@ -1,15 +1,3 @@
-Nonterminals useless in grammar
-
-    sign
-
-
-Rules useless in grammar
-
-   58 sign: "+"
-   59     | "-"
-   60     | empty
-
-
 Grammar
 
     0 $accept: program $end
@@ -92,13 +80,12 @@ Grammar
    50     | term "/" factor
 
    51 factor: identsym
-   52       | posSign numbersym
-   53       | negSign numbersym
+   52       | "-" numbersym
+   53       | posSign numbersym
    54       | "(" expr ")"
 
    55 posSign: "+"
-
-   56 negSign: "-"
+   56        | empty
 
    57 empty: ε
 
@@ -110,7 +97,7 @@ Terminals, with rules where they appear
     identsym <ident> (258) 8 12 13 16 25 26 30 51
     numbersym <number> (259) 8 52 53
     "+" <token> (260) 46 55
-    "-" <token> (261) 47 56
+    "-" <token> (261) 47 52
     "*" <token> (262) 49
     "/" <token> (263) 50
     "." <token> (264) 1
@@ -231,14 +218,11 @@ Nonterminals, with rules where they appear
         on left: 51 52 53 54
         on right: 48 49 50
     posSign <token> (65)
-        on left: 55
-        on right: 52
-    negSign <token> (66)
-        on left: 56
+        on left: 55 56
         on right: 53
-    empty <empty> (67)
+    empty <empty> (66)
         on left: 57
-        on right: 3 9 14
+        on right: 3 9 14 56
 
 
 State 0
@@ -508,6 +492,8 @@ State 27
     "odd"     shift, and go to state 54
     "("       shift, and go to state 55
 
+    $default  reduce using rule 57 (empty)
+
     condition       go to state 56
     oddCondition    go to state 57
     relOpCondition  go to state 58
@@ -515,7 +501,7 @@ State 27
     term            go to state 60
     factor          go to state 61
     posSign         go to state 62
-    negSign         go to state 63
+    empty           go to state 63
 
 
 State 28
@@ -528,6 +514,8 @@ State 28
     "odd"     shift, and go to state 54
     "("       shift, and go to state 55
 
+    $default  reduce using rule 57 (empty)
+
     condition       go to state 64
     oddCondition    go to state 57
     relOpCondition  go to state 58
@@ -535,7 +523,7 @@ State 28
     term            go to state 60
     factor          go to state 61
     posSign         go to state 62
-    negSign         go to state 63
+    empty           go to state 63
 
 
 State 29
@@ -554,11 +542,13 @@ State 30
     "-"       shift, and go to state 53
     "("       shift, and go to state 55
 
+    $default  reduce using rule 57 (empty)
+
     expr     go to state 66
     term     go to state 60
     factor   go to state 61
     posSign  go to state 62
-    negSign  go to state 63
+    empty    go to state 63
 
 
 State 31
@@ -675,11 +665,13 @@ State 46
     "-"       shift, and go to state 53
     "("       shift, and go to state 55
 
+    $default  reduce using rule 57 (empty)
+
     expr     go to state 68
     term     go to state 60
     factor   go to state 61
     posSign  go to state 62
-    negSign  go to state 63
+    empty    go to state 63
 
 
 State 47
@@ -728,9 +720,9 @@ State 52
 
 State 53
 
-   56 negSign: "-" •
+   52 factor: "-" • numbersym
 
-    $default  reduce using rule 56 (negSign)
+    numbersym  shift, and go to state 72
 
 
 State 54
@@ -742,11 +734,13 @@ State 54
     "-"       shift, and go to state 53
     "("       shift, and go to state 55
 
-    expr     go to state 72
+    $default  reduce using rule 57 (empty)
+
+    expr     go to state 73
     term     go to state 60
     factor   go to state 61
     posSign  go to state 62
-    negSign  go to state 63
+    empty    go to state 63
 
 
 State 55
@@ -758,18 +752,20 @@ State 55
     "-"       shift, and go to state 53
     "("       shift, and go to state 55
 
-    expr     go to state 73
+    $default  reduce using rule 57 (empty)
+
+    expr     go to state 74
     term     go to state 60
     factor   go to state 61
     posSign  go to state 62
-    negSign  go to state 63
+    empty    go to state 63
 
 
 State 56
 
    28 ifStmt: "if" condition • "then" stmt "else" stmt
 
-    "then"  shift, and go to state 74
+    "then"  shift, and go to state 75
 
 
 State 57
@@ -792,16 +788,16 @@ State 59
    46 expr: expr • "+" term
    47     | expr • "-" term
 
-    "+"   shift, and go to state 75
-    "-"   shift, and go to state 76
-    "="   shift, and go to state 77
-    "<>"  shift, and go to state 78
-    "<"   shift, and go to state 79
-    "<="  shift, and go to state 80
-    ">"   shift, and go to state 81
-    ">="  shift, and go to state 82
+    "+"   shift, and go to state 76
+    "-"   shift, and go to state 77
+    "="   shift, and go to state 78
+    "<>"  shift, and go to state 79
+    "<"   shift, and go to state 80
+    "<="  shift, and go to state 81
+    ">"   shift, and go to state 82
+    ">="  shift, and go to state 83
 
-    relOp  go to state 83
+    relOp  go to state 84
 
 
 State 60
@@ -810,8 +806,8 @@ State 60
    49 term: term • "*" factor
    50     | term • "/" factor
 
-    "*"  shift, and go to state 84
-    "/"  shift, and go to state 85
+    "*"  shift, and go to state 85
+    "/"  shift, and go to state 86
 
     $default  reduce using rule 45 (expr)
 
@@ -825,16 +821,16 @@ State 61
 
 State 62
 
-   52 factor: posSign • numbersym
+   53 factor: posSign • numbersym
 
-    numbersym  shift, and go to state 86
+    numbersym  shift, and go to state 87
 
 
 State 63
 
-   53 factor: negSign • numbersym
+   56 posSign: empty •
 
-    numbersym  shift, and go to state 87
+    $default  reduce using rule 56 (posSign)
 
 
 State 64
@@ -857,8 +853,8 @@ State 66
    46 expr: expr • "+" term
    47     | expr • "-" term
 
-    "+"  shift, and go to state 75
-    "-"  shift, and go to state 76
+    "+"  shift, and go to state 76
+    "-"  shift, and go to state 77
 
     $default  reduce using rule 31 (writeStmt)
 
@@ -876,8 +872,8 @@ State 68
    46 expr: expr • "+" term
    47     | expr • "-" term
 
-    "+"  shift, and go to state 75
-    "-"  shift, and go to state 76
+    "+"  shift, and go to state 76
+    "-"  shift, and go to state 77
 
     $default  reduce using rule 25 (assignStmt)
 
@@ -926,28 +922,35 @@ State 71
 
 State 72
 
+   52 factor: "-" numbersym •
+
+    $default  reduce using rule 52 (factor)
+
+
+State 73
+
    37 oddCondition: "odd" expr •
    46 expr: expr • "+" term
    47     | expr • "-" term
 
-    "+"  shift, and go to state 75
-    "-"  shift, and go to state 76
+    "+"  shift, and go to state 76
+    "-"  shift, and go to state 77
 
     $default  reduce using rule 37 (oddCondition)
 
 
-State 73
+State 74
 
    46 expr: expr • "+" term
    47     | expr • "-" term
    54 factor: "(" expr • ")"
 
-    "+"  shift, and go to state 75
-    "-"  shift, and go to state 76
+    "+"  shift, and go to state 76
+    "-"  shift, and go to state 77
     ")"  shift, and go to state 91
 
 
-State 74
+State 75
 
    28 ifStmt: "if" condition "then" • stmt "else" stmt
 
@@ -971,7 +974,7 @@ State 74
     skipStmt    go to state 41
 
 
-State 75
+State 76
 
    46 expr: expr "+" • term
 
@@ -980,13 +983,15 @@ State 75
     "-"       shift, and go to state 53
     "("       shift, and go to state 55
 
+    $default  reduce using rule 57 (empty)
+
     term     go to state 93
     factor   go to state 61
     posSign  go to state 62
-    negSign  go to state 63
+    empty    go to state 63
 
 
-State 76
+State 77
 
    47 expr: expr "-" • term
 
@@ -995,55 +1000,57 @@ State 76
     "-"       shift, and go to state 53
     "("       shift, and go to state 55
 
+    $default  reduce using rule 57 (empty)
+
     term     go to state 94
     factor   go to state 61
     posSign  go to state 62
-    negSign  go to state 63
+    empty    go to state 63
 
 
-State 77
+State 78
 
    39 relOp: "=" •
 
     $default  reduce using rule 39 (relOp)
 
 
-State 78
+State 79
 
    40 relOp: "<>" •
 
     $default  reduce using rule 40 (relOp)
 
 
-State 79
+State 80
 
    41 relOp: "<" •
 
     $default  reduce using rule 41 (relOp)
 
 
-State 80
+State 81
 
    42 relOp: "<=" •
 
     $default  reduce using rule 42 (relOp)
 
 
-State 81
+State 82
 
    43 relOp: ">" •
 
     $default  reduce using rule 43 (relOp)
 
 
-State 82
+State 83
 
    44 relOp: ">=" •
 
     $default  reduce using rule 44 (relOp)
 
 
-State 83
+State 84
 
    38 relOpCondition: expr relOp • expr
 
@@ -1052,14 +1059,16 @@ State 83
     "-"       shift, and go to state 53
     "("       shift, and go to state 55
 
+    $default  reduce using rule 57 (empty)
+
     expr     go to state 95
     term     go to state 60
     factor   go to state 61
     posSign  go to state 62
-    negSign  go to state 63
+    empty    go to state 63
 
 
-State 84
+State 85
 
    49 term: term "*" • factor
 
@@ -1068,12 +1077,14 @@ State 84
     "-"       shift, and go to state 53
     "("       shift, and go to state 55
 
+    $default  reduce using rule 57 (empty)
+
     factor   go to state 96
     posSign  go to state 62
-    negSign  go to state 63
+    empty    go to state 63
 
 
-State 85
+State 86
 
    50 term: term "/" • factor
 
@@ -1082,21 +1093,16 @@ State 85
     "-"       shift, and go to state 53
     "("       shift, and go to state 55
 
+    $default  reduce using rule 57 (empty)
+
     factor   go to state 97
     posSign  go to state 62
-    negSign  go to state 63
-
-
-State 86
-
-   52 factor: posSign numbersym •
-
-    $default  reduce using rule 52 (factor)
+    empty    go to state 63
 
 
 State 87
 
-   53 factor: negSign numbersym •
+   53 factor: posSign numbersym •
 
     $default  reduce using rule 53 (factor)
 
@@ -1159,8 +1165,8 @@ State 93
    49 term: term • "*" factor
    50     | term • "/" factor
 
-    "*"  shift, and go to state 84
-    "/"  shift, and go to state 85
+    "*"  shift, and go to state 85
+    "/"  shift, and go to state 86
 
     $default  reduce using rule 46 (expr)
 
@@ -1171,8 +1177,8 @@ State 94
    49 term: term • "*" factor
    50     | term • "/" factor
 
-    "*"  shift, and go to state 84
-    "/"  shift, and go to state 85
+    "*"  shift, and go to state 85
+    "/"  shift, and go to state 86
 
     $default  reduce using rule 47 (expr)
 
@@ -1183,8 +1189,8 @@ State 95
    46 expr: expr • "+" term
    47     | expr • "-" term
 
-    "+"  shift, and go to state 75
-    "-"  shift, and go to state 76
+    "+"  shift, and go to state 76
+    "-"  shift, and go to state 77
 
     $default  reduce using rule 38 (relOpCondition)
 
