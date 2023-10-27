@@ -291,19 +291,19 @@ term :
 
 factor : 
     identsym
-                            
+
     | "-" numbersym 
         { $$ = ast_expr_negated_number($1, $2); }
     | posSign numbersym
         { $$ = ast_expr_pos_number($1, $2); }   
     | "(" expr ")" 
-        { $$ = $2; }                 
+        { $$ = $2; }          
     ;
 
 
 posSign :
     "+"
-    | empty
+    /* do i need an empty here? */
     ;
 
 empty : 
