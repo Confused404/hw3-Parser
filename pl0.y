@@ -290,14 +290,14 @@ term :
 
 
 factor : 
-    identsym 
-                                             /* { $$ = ast_idents_singleton($1); } */
+    identsym
+                            
     | "-" numbersym 
         { $$ = ast_expr_negated_number($1, $2); }
     | posSign numbersym
         { $$ = ast_expr_pos_number($1, $2); }   
     | "(" expr ")" 
-        { $$ = ast_odd_condition($2); }                 
+        { $$ = $2; }                 
     ;
         /*  ( expr) function could be wrong */
 
