@@ -1,4 +1,4 @@
-/* $Id: ast.h,v 1.18 2023/10/20 14:17:26 leavens Exp leavens $ */
+/* $Id: ast.h,v 1.19 2023/10/27 01:43:53 leavens Exp leavens $ */
 #ifndef _AST_H
 #define _AST_H
 #include <stdbool.h>
@@ -468,6 +468,9 @@ extern expr_t ast_expr_binary_op(binary_op_expr_t e);
 
 // Return an expression AST for an identifier
 extern expr_t ast_expr_ident(ident_t e);
+
+// Return an AST for an expression that's a number
+extern expr_t ast_expr_number(number_t e);
 
 // Return an expression AST for a negated number
 extern expr_t ast_expr_negated_number(token_t sign, number_t number);
