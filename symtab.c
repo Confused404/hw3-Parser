@@ -1,12 +1,5 @@
 // test
-#include <stdio.h>
-#include <stdlib.h>
-#include "parser.h"
-#include "lexer.h"
-#include "ast.h"
-#include "scope_check.h"
-#include "utilities.h"
-#include "unparser.h"
+#include "symtab.h"
 
 void initialize();
 
@@ -18,19 +11,19 @@ bool full();
 
 
 
-bool declared(name);
+bool declared(char * name);
 
 
 
-id_use *lookup(name);
+id_use *lookup(char * name);
 
 
 
-bool declared_in_current_scope(name);
+bool declared_in_current_scope(char * name);
 
 
 
-void insert(name, id_attrs);
+void insert(char * name, id_attrs *attrs);
 
 
 void enter_scope();
