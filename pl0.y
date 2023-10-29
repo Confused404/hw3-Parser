@@ -303,7 +303,7 @@ factor :
 
 posSign :
     "+"
-      //| empty { $$ = ; }/* do i need an empty here? */
+    | empty 
     ;
 
 empty : 
