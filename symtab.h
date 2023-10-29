@@ -16,31 +16,19 @@
 
 extern void initialize();
 
-
 extern int size();
-
 
 extern bool full();
 
-
-
 extern bool declared(char * name);
-
-
 
 extern id_use *lookup(char * name);
 
-
-
 extern bool declared_in_current_scope(char * name);
-
-
 
 extern void insert( char * name, id_attrs *attrs);
 
-
 extern void enter_scope();
-
 
 extern void leave_scope();
 

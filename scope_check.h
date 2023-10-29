@@ -12,4 +12,6 @@
 #include "id_attrs.h"
 #include "id_use.h"
 
+void scope_check_program(block_t);
+
 #endif
