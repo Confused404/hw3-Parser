@@ -12,6 +12,8 @@
 #include "id_attrs.h"
 #include "id_use.h"
 
+#define MAX_SCOPE_SIZE 4096
+
 extern void initialize();
 
 
