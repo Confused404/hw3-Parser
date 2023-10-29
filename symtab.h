@@ -1,8 +1,7 @@
-#ifndef _SCOPE_SYMTAB_H
-#define _SCOPE_SYMTAB_H
+#ifndef _SYMTAB_H
+#define _SYMTAB_H
 
 #include <stdbool.h>
-#include "token.h"
 #include "ast.h"
 #include "id_attrs.h"
 

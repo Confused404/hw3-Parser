@@ -1,142 +1,125 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include "symtab.h"
 #include "utilities.h"
 
-// For a data structure, we use an array (for now),
-// although a hash table would be better...
-
-// size is also the index of the next element to allocate
-static int size;
-// The data structure is such that the first size entries contain actual data
-static id_attrs entries[MAX_SYMTAB_SIZE];
-
-// The symbol table's invariant
-void symtab_okay()
+typedef struct
 {
-    assert(0 <= size);
-    assert(size < MAX_SYMTAB_SIZE);
-    for (int i = size; i < MAX_SYMTAB_SIZE; i++)
+    const char *id;
+    id_attrs *attrs;
+} symtab_assoc_t;
+
+// Invariant: 0 <= size < MAX_SCOPE_SIZE;
+typedef struct scope_symtab_s
+{
+    unsigned int size;
+    symtab_assoc_t *entries[MAX_SCOPE_SIZE];
+} scope_symtab_t;
+
+// The current scope (i.e., the symbol table)
+// Idea: size is the index into entries
+// of the most recent symtab_assoc added to the list of entries.
+// So the next entry goes into the index size+1
+static scope_symtab_t *symtab = NULL;
+
+// Allocate a fresh scope symbol table and return (a pointer to) it.
+// Issues an error message (on stderr) if there is no space
+// and exits with a failure error code in that case.
+static scope_symtab_t *scope_create()
+{
+    scope_symtab_t *new_scope = (scope_symtab_t *)malloc(sizeof(scope_symtab_t));
+    if (new_scope == NULL)
     {
-        assert(entries[i].name == NULL);
+        bail_with_error("No space for new scope_symtab_t!");
     }
+    new_scope->size = 0;
+    for (int j; j < MAX_SCOPE_SIZE; j++)
+    {
+        new_scope->entries[j] = NULL;
+    }
+    return new_scope;
 }
 
-// initialize the symbol table
-void symtab_initialize()
+// initialize the symbol table for the current scope
+void scope_initialize()
 {
-    size = 0; // no data yet
-    id_attrs none;
-    none.name = NULL;
-    none.file_loc = NULL;
-    none.addr = 0;
-    for (int i = 0; i < MAX_SYMTAB_SIZE; i++)
-    {
-        entries[i] = none;
-    }
-    symtab_okay();
+    // create the scope and assign it to the global symtab
+    symtab = scope_create();
 }
 
-// Return the number of mappings in this symbol table
-unsigned int symtab_size() { return size; }
-
-// Is this symbol table empty? (I.e., does it have not mappings?)
-bool symtab_empty() { return size == 0; }
-
-// Is this symbol table full? (I.e., can it not hold more mappings?)
-// (i.e., is symtab_size() equal to MAX_SYMTAB_SIZE-1)?
-bool symtab_full() { return size >= MAX_SYMTAB_SIZE; }
-
-// Is the given name associated with some attributes?
-bool symtab_defined(const char *name)
+// Return the current scope's next offset to use for allocation,
+// which is the size of the current scope (number of declared ids).
+unsigned int scope_size()
 {
-    id_attrs *v = symtab_lookup(name);
-    return v != NULL;
+    return symtab->size;
 }
 
-// Requires: !symtab_full
-// Requires: !symtab_defined(attrs.name)
-// Remember the given attributes (i.e., an association from attrs.name
-// to the other parts of attrs)
-void symtab_insert(id_attrs attrs)
+// Is the current scope full?
+bool scope_full()
 {
-    if (symtab_full())
-    {
-        bail_with_error("The symtab is full!");
-    }
-    entries[size++] = attrs;
+    return scope_size() >= MAX_SCOPE_SIZE;
 }
 
-// if name == NULL or if name is not defined, return -1
-// if name is defined in the table, return its index
-static int find_index(const char *name)
+// Requires: assoc != NULL && !scope_full() && !scope_defined(assoc->id);
+// Add an association from the given name to the given id attributes
+// in the current scope.
+static void scope_add(symtab_assoc_t *assoc)
 {
-    if (name == NULL)
+    // assert(assoc != NULL);
+    // assert(!scope_full());
+    // assert(!scope_defined(assoc->id));
+    symtab->entries[symtab->size] = assoc;
+    symtab->size++;
+}
+
+// Requires: !scope_defined(name) && attrs != NULL;
+// Modify the current scope symbol table to
+// add an association from the given name to the given id_attrs attrs.
+void scope_insert(const char *name, id_attrs *attrs)
+{
+    // assert(!scope_defined(name));
+    // assert(attrs != NULL);
+    symtab_assoc_t *new_assoc = malloc(sizeof(symtab_assoc_t));
+    if (new_assoc == NULL)
     {
-        return -1;
+        bail_with_error("No space for association!");
     }
-    for (int i = 0; i < size; i++)
+    new_assoc->id = name;
+    new_assoc->attrs = attrs;
+    scope_add(new_assoc);
+}
+
+// Requires: name != NULL;
+// Is the given name associated with some attributes in the current scope?
+bool scope_defined(const char *name)
+{
+    // assert(symtab != NULL);
+    // assert(name != NULL);
+    return scope_lookup(name) != NULL;
+}
+
+// Requires: name != NULL and scope_initialize() has been called previously.
+// Return (a pointer to) the attributes of the given name in the current scope
+// or NULL if there is no association for name.
+id_attrs *scope_lookup(const char *name)
+{
+    int i;
+    // assert(name != NULL);
+    // assert(symtab != NULL);
+    for (i = 0; i < symtab->size; i++)
     {
-        if (strcmp(entries[i].name, name) == 0)
+        // assert(symtab != NULL);
+        // assert(symtab->entries != NULL);
+        // assert(0 <= i && i < symtab->size);
+        // assert(symtab->entries[i] != NULL);
+        // assert(symtab->entries[i]->id != NULL);
+        if (strcmp(symtab->entries[i]->id, name) == 0)
         {
-            return i;
+            return symtab->entries[i]->attrs;
         }
     }
-    return -1;
-}
-
-// Return (a pointer to) the attributes of the given name
-// or NULL if there is no association for that name.
-id_attrs *symtab_lookup(const char *name)
-{
-    int i = find_index(name);
-    if (0 <= i)
-    {
-        return &entries[i];
-    }
-    else
-    {
-        return NULL;
-    }
-}
-
-// iteration helpers
-// iterations use an external key which is a name
-
-// Start an iteration by returning the first name in the symbol table,
-// return NULL if symtab_empty()
-const char *symtab_first_name()
-{
-    if (symtab_empty())
-    {
-        return NULL;
-    }
-    assert(0 < size);
-    return entries[0].name;
-}
-
-// Are there more names defined in the symbol table after the given one?
-// This returns false if name is NULL, if name is not defined,
-// or if there are no more names following name in the symbol table
-bool symtab_more_after(const char *name)
-{
-    int i = find_index(name);
-    return (0 <= i && i < size);
-}
-
-// Requires: symtab_more_after(name);
-// Return the next name defined in the symbol table after the given one,
-// but return NULL if there are no more names
-const char *symtab_next_name(const char *name)
-{
-    int i = find_index(name);
-    if (i < 0 || i >= size)
-    {
-        return NULL;
-    }
-    else
-    {
-        return entries[i + 1].name;
-    }
+    // assert(i == symtab->size);
+    return NULL;
 }
