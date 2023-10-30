@@ -233,7 +233,10 @@ writeStmt :
 
 skipStmt : 
     "skip" 
-        { $$ = ast_skip_stmt(file_location_make(lexer_filename(), lexer_line())); }
+        { 
+            file_location * file = file_location_make(lexer_filename(), lexer_line());
+            $$ = ast_skip_stmt(file);
+        }
     ; 
 
 stmts : 
@@ -303,12 +306,21 @@ factor :
 
 posSign :
     "+"
-    | empty 
+    | empty  
+        { 
+            file_location * file = file_location_make(lexer_filename(), lexer_line());
+            const char * plus = "+";
+            $$ = ast_token(file, plus, 260); 
+        }
     ;
 
 empty : 
     %empty
-        { $$ = ast_empty(file_location_make(lexer_filename(), lexer_line())); }
+        { 
+            file_location * file = file_location_make(lexer_filename(), lexer_line());
+
+            $$ = ast_empty(file); 
+        }
     ;
 
 

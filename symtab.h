@@ -9,25 +9,25 @@
 #define MAX_SCOPE_SIZE 4096
 
 // initialize the symbol table for the current scope
-extern void scope_initialize();
+extern void symtab_initialize();
 
 // Return the current scope's next offset to use for allocation,
 // which is the size of the current scope (number of declared ids).
-extern unsigned int scope_size();
+extern unsigned int symtab_size();
 
 // Is the current scope full?
-extern bool scope_full();
+extern bool symtab_full();
 
 // Is the given name associated with some attributes in the current scope?
-extern bool scope_defined(const char *name);
+extern bool symtab_declared(const char *name);
 
-// Requires: !scope_defined(name) && attrs != NULL;
+// Requires: !symtab_declared(name) && attrs != NULL;
 // Modify the current scope symbol table to
 // add an association from the given name to the given id_attrs attrs.
-extern void scope_insert(const char *name, id_attrs *attrs);
+extern void symtab_insert(const char *name, id_attrs *attrs);
 
 // Return (a pointer to) the attributes of the given name in the current scope
 // or NULL if there is no association for name.
-extern id_attrs *scope_lookup(const char *name);
+extern id_attrs *symtab_lookup(const char *name);
 
 #endif

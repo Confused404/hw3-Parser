@@ -14,18 +14,18 @@
 // or uses of identifiers that were not declared
 void scope_check_program(AST *prog)
 {
-    symtab_enter_scope();
+    symtab_enter_scope(); // // //we are missing a definition for this function
     scope_check_varDecls(prog->data.program.vds);
     scope_check_stmt(prog->data.program.stmt);
-    symtab_leave_scope();
+    symtab_leave_scope(); // // //we are missing a definition for this function
 }
 
 // build the symbol table and check the declarations in vds
 void scope_check_varDecls(AST_list vds)
 {
     while (!ast_list_is_empty(vds)) {
-	scope_check_varDecl(ast_list_first(vds));
-	vds = ast_list_rest(vds);
+	scope_check_varDecl(ast_list_first(vds)); // // // ast_list_first is not defined
+	vds = ast_list_rest(vds);                 // // // ast_list_rest is not defined
     }
 }
 
@@ -34,10 +34,8 @@ void scope_check_varDecls(AST_list vds)
 // or produce an error if the name has already been declared
 void scope_check_varDecl(AST *vd)
 {
-    int ofst = symtab_next_loc_offset();
-    id_attrs *attrs = id_attrs_loc_create(vd->file_loc,
-					  vd->data.var_decl.vt,
-					  ofst);
+    int ofst = symtab_next_loc_offset(); // // // symtab_next_loc_offset is not defined
+    id_attrs *attrs = id_attrs_loc_create(vd->file_loc, vd->data.var_decl.vt, ofst); // // // id_attrs_loc_create is not defined
     const char *name = vd->data.var_decl.name;
     symtab_insert(name, attrs);
 }
@@ -85,14 +83,14 @@ void scope_check_assignStmt(AST *stmt)
 // (if not, then produce an error)
 void scope_check_beginStmt(AST *stmt)
 {
-    symtab_enter_scope();
+    symtab_enter_scope(); // // // symtab_enter_scope is not defined
     scope_check_varDecls(stmt->data.begin_stmt.vds);
     AST_list stmts = stmt->data.begin_stmt.stmts;
     while (!ast_list_is_empty(stmts)) {
-	scope_check_stmt(ast_list_first(stmts));
-	stmts = ast_list_rest(stmts);
+	scope_check_stmt(ast_list_first(stmts)); // // // ast_list_first is not defined
+	stmts = ast_list_rest(stmts);            // // // ast_list_rest is not defined
     }
-    symtab_leave_scope();
+    symtab_leave_scope();                    // // // symtab_leave_scope is not defined
 }
 
 // check the statement to make sure that
@@ -168,8 +166,7 @@ static id_use *scope_check_ident_declared(file_location floc, const char *name)
 {
     id_use *ret = symtab_lookup(name);
     if (ret == NULL) {
-	general_error(floc,
-		      "identifier \"%s\" is not declared!", name);
+	general_error(floc, "identifier \"%s\" is not declared!", name); // // // general_error is not defined
     }
     return ret;
 }
