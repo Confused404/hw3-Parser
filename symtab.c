@@ -47,13 +47,13 @@ bool declared(const char * name)
     return true;
 }
 
-id_attrs lookup(const char * name)
+id_use * lookup(const char * name)
 {
     for(int i = 0; i < size(); i++)
     {
         if(strcmp(symtab->entries[i]->id, name) == 0)
         {
-            return &symtab->entries[i]->attrs;
+            return id_use_create(symtab->entries[i]->attrs, i);
         }
     }
     return NULL;
