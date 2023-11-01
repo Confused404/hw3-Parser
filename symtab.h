@@ -20,7 +20,7 @@ extern bool full();
 
 extern bool declared(const char * name);
 
-extern id_use *lookup(const char * name);
+extern id_use * lookup(const char * name);
 
 extern bool declared_in_current_scope(const char * name);
 

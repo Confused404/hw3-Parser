@@ -9,6 +9,7 @@ typedef struct
 typedef struct scope_symtab_s
 {
     unsigned int size;
+    unsigned int current_scope;
     symtab_assoc_t *entries[MAX_SCOPE_SIZE];
 } scope_symtab_t;
 
@@ -22,6 +23,7 @@ void symtab_initialize()
         bail_with_error("No space for symbol table!");
     }
     symtab->size = 0;
+    symtab->current_scope = 0;
     for(int i = 0; i < MAX_SCOPE_SIZE; i++)
     {
         symtab->entries[i] = NULL;
@@ -61,21 +63,37 @@ id_use * lookup(const char * name)
 
 bool declared_in_current_scope(const char * name)
 {
-
+    if(declared(name) && lookup(name)->levelsOutward == symtab->current_scope) // to check if declared and in current scope
+    {
+        return true;
+    }
+    return false;
 }
 
 void insert(const char * name, id_attrs * attrs)
 {
-
+    symtab_assoc_t *new_assoc = malloc(sizeof(symtab_assoc_t));
+    if (new_assoc == NULL)
+    {
+        bail_with_error("No space for association!");
+    }
+    new_assoc->id = name;
+    new_assoc->attrs = attrs;
+    symtab->entries[symtab->size] = new_assoc;
+    symtab->size++;
 }
 
 void enter_scope()
 {
-
+    symtab->current_scope++;
 }
 
 void leave_scope()
 {
-
+    while(size() > 0 && lookup(symtab->entries[size() - 1]->id)->levelsOutward == symtab->current_scope)
+    {
+        symtab->size--;
+    }
+    symtab->current_scope--;
 }
 
