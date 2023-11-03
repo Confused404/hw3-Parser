@@ -17,22 +17,33 @@ void scope_check_block(block_t blk) // why is it extern in the unparser?
 
 void scope_check_const_decls(const_decls_t cds)
 {
-
+    const_decl_t *cdp = cds.const_decls;
+    while (!ast_list_is_empty((void*)cdp)) //could be changed to cdp != NULL
+    { 
+        scope_check_const_decl(*cdp);
+        cdp = cdp->next;
+    }
 }
 
 void scope_check_const_decl(const_decl_t cd)
 {
-
+    scope_check_const_defs(cd.const_defs);
 }
 
 void scope_check_const_defs(const_defs_t cdfs)
 {
-
+    const_def_t *cdfp = cdfs.const_defs;
+    while (!ast_list_is_empty((void*)cdfp)) //could be changed to cdfp != NULL
+    { 
+        scope_check_const_def(*cdfp);
+        cdfp = cdfp->next;
+    }
 }
 
 void scope_check_const_def(const_def_t cdf)
 {
-
+    scope_check_ident_expr(cdf.ident);
+    scope_check_number(cdf.number);
 }
 
 void scope_check_var_decls(var_decls_t vds)
@@ -47,10 +58,10 @@ void scope_check_var_decls(var_decls_t vds)
 
 void scope_check_var_decl(var_decl_t vd)
 {
-    scope_check_idents(vd.idents, vd.type_tag);
+    scope_check_idents(vd.idents);
 }
 
-void scope_check_idents(idents_t idents, AST_type type_tag) //second parameter might be wrong
+void scope_check_idents(idents_t idents) //second parameter might be needed
 {
     ident_t *idp = idents.idents;
     while (!ast_list_is_empty((void*)idp)) //could be changed to idp != NULL
@@ -62,22 +73,35 @@ void scope_check_idents(idents_t idents, AST_type type_tag) //second parameter m
 
 void scope_check_declare_ident(ident_t id) //might take a second parameter
 {
-    
+    scope_check_ident_declared(*(id.file_loc), id.name);
 }
 
 void scope_check_proc_decls(proc_decls_t pds)
 {
-
+    proc_decl_t *pdp = pds.proc_decls;
+    while (!ast_list_is_empty((void*)pdp)) //could be changed to pdp != NULL
+    { 
+        scope_check_proc_decl(*pdp);
+        pdp = pdp->next;
+    }
 }
 
 void scope_check_proc_decl(proc_decl_t pd)
 {
-
+    enter_scope();
+    scope_check_ident_declared(*(pd.file_loc), pd.name);
+    scope_check_block(*pd.block);
+    leave_scope();
 }
 
 void scope_check_stmts(stmts_t stmts)
 {
-    
+    stmt_t *stp = stmts.stmts;
+    while (!ast_list_is_empty((void*)stp)) //could be changed to stp != NULL
+    { 
+        scope_check_stmt(*stp);
+        stp = stp->next;
+    }
 }
 
 void scope_check_stmt(stmt_t stmt)
@@ -124,7 +148,7 @@ void scope_check_assign_stmt(assign_stmt_t stmt)
 
 void scope_check_call_stmt(call_stmt_t stmt)
 {
-
+    scope_check_ident_declared(*(stmt.file_loc), stmt.name);
 }
 
 void scope_check_begin_stmt(begin_stmt_t stmt)
@@ -143,7 +167,8 @@ void scope_check_if_stmt(if_stmt_t stmt)
 
 void scope_check_while_stmt(while_stmt_t stmt)
 {
-
+    scope_check_condition(stmt.condition);
+    scope_check_stmt(*(stmt.body));
 }
 
 void scope_check_read_stmt(read_stmt_t stmt)
@@ -163,22 +188,35 @@ void scope_check_skip_stmt(int level)
 
 void scope_check_condition(condition_t cond)
 {
-
+    switch (cond.cond_kind)
+    {
+    case ck_odd:
+        scope_check_odd_condition(cond.data.odd_cond);
+        break;
+    case ck_rel:
+        scope_check_rel_op_condition(cond.data.rel_op_cond);
+        break;
+    default:
+        bail_with_error("Call to scope_check_condition with an AST that is not a condition!");
+        break;
+    }
 }
 
 void scope_check_odd_condition(odd_condition_t cond)
 {
-
+    scope_check_expr(cond.expr);
 }
 
 void scope_check_rel_op_condition(rel_op_condition_t cond)
 {
-
+    scope_check_token(cond.rel_op);
+    scope_check_expr(cond.expr1);
+    scope_check_expr(cond.expr2);
 }
 
 void scope_check_token(token_t token)
 {
-
+    scope_check_ident_declared(*(token.file_loc), token.text);
 }
 
 void scope_check_expr(expr_t exp)
@@ -223,7 +261,8 @@ id_use *scope_check_ident_declared(file_location floc, const char *name)
 
 void scope_check_number(number_t num)
 {
-
+    //this is what it says when you reach expr_number in scope_check_expr:
+        // "no identifiers are possible in this case, so just return"
 }
 
 

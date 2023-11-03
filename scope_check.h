@@ -27,7 +27,7 @@ extern void scope_check_var_decls(var_decls_t vds);
 
 extern void scope_check_var_decl(var_decl_t vd);
 
-extern void scope_check_idents(idents_t idents, AST_type type_tag);
+extern void scope_check_idents(idents_t idents);
 
 extern void scope_check_declare_ident(ident_t id);
 
