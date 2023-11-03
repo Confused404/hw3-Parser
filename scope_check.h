@@ -27,7 +27,9 @@ extern void scope_check_var_decls(var_decls_t vds);
 
 extern void scope_check_var_decl(var_decl_t vd);
 
-extern void scope_check_idents(idents_t idents);
+extern void scope_check_idents(idents_t idents, AST_type type_tag);
+
+extern void scope_check_declare_ident(ident_t id);
 
 extern void scope_check_proc_decls(proc_decls_t pds);
 
@@ -66,6 +68,8 @@ extern void scope_check_expr(expr_t exp);
 extern void scope_check_bin_op_expr(binary_op_expr_t exp);
 
 extern void scope_check_ident(ident_t id);
+
+extern id_use *scope_check_ident_declared(file_location floc, const char *name);
 
 extern void scope_check_number(number_t num);
 
