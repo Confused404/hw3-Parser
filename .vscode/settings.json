@@ -4,6 +4,7 @@
         "stdlib.h": "c",
         "symtab.h": "c",
         "file_location.h": "c",
-        "utilities.h": "c"
+        "utilities.h": "c",
+        "id_use.h": "c"
     }
 }
