@@ -53,8 +53,6 @@ extern void scope_check_read_stmt(read_stmt_t stmt);
 
 extern void scope_check_write_stmt(write_stmt_t stmt);
 
-extern void scope_check_skip_stmt();
-
 extern void scope_check_condition(condition_t cond);
 
 extern void scope_check_odd_condition(odd_condition_t cond);
@@ -70,7 +68,5 @@ extern void scope_check_bin_op_expr(binary_op_expr_t exp);
 extern void scope_check_ident(ident_t id);
 
 extern id_use *scope_check_ident_declared(file_location floc, const char *name);
-
-extern void scope_check_number(number_t num);
 
 #endif
