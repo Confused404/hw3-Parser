@@ -7,7 +7,7 @@ void scope_check_program(block_t prog)
     leave_scope();
 }
 
-void scope_check_block(block_t blk) // why is it extern in the unparser?
+void scope_check_block(block_t blk)
 {
     scope_check_const_decls(blk.const_decls);
     scope_check_var_decls(blk.var_decls);
@@ -61,7 +61,7 @@ void scope_check_var_decl(var_decl_t vd)
     scope_check_idents(vd.idents);
 }
 
-void scope_check_idents(idents_t idents) //second parameter might be needed
+void scope_check_idents(idents_t idents) 
 {
     ident_t *idp = idents.idents;
     while (!ast_list_is_empty((void*)idp)) //could be changed to idp != NULL
@@ -71,7 +71,7 @@ void scope_check_idents(idents_t idents) //second parameter might be needed
     }
 }
 
-void scope_check_declare_ident(ident_t id) //might take a second parameter
+void scope_check_declare_ident(ident_t id) 
 {
     scope_check_ident_declared(*(id.file_loc), id.name);
 }
@@ -130,7 +130,7 @@ void scope_check_stmt(stmt_t stmt)
             scope_check_write_stmt(stmt.data.write_stmt);
             break;
         case skip_stmt:
-            scope_check_skip_stmt(); //need to add parameter
+            //nothing to be done
             break;
         default:
             bail_with_error("Call to scope_check_stmt with an AST that is not a statement!");
@@ -179,11 +179,6 @@ void scope_check_read_stmt(read_stmt_t stmt)
 void scope_check_write_stmt(write_stmt_t stmt)
 {
     scope_check_expr(stmt.expr);
-}
-
-void scope_check_skip_stmt(int level)
-{
-
 }
 
 void scope_check_condition(condition_t cond)
@@ -257,12 +252,6 @@ id_use *scope_check_ident_declared(file_location floc, const char *name)
 	bail_with_prog_error(floc, "identifier \"%s\" is not declared!", name);
     }
     return ret;
-}
-
-void scope_check_number(number_t num)
-{
-    //this is what it says when you reach expr_number in scope_check_expr:
-        // "no identifiers are possible in this case, so just return"
 }
 
 

@@ -53,7 +53,7 @@ extern void scope_check_read_stmt(read_stmt_t stmt);
 
 extern void scope_check_write_stmt(write_stmt_t stmt);
 
-extern void scope_check_skip_stmt(int level);
+extern void scope_check_skip_stmt();
 
 extern void scope_check_condition(condition_t cond);
 
