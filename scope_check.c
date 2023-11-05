@@ -40,10 +40,11 @@ void scope_check_const_defs(const_defs_t cdfs)
     }
 }
 
+
 void scope_check_const_def(const_def_t cdf)
 {
     scope_check_ident_expr(cdf.ident);
-    scope_check_number(cdf.number);
+    //might need to scope check number
 }
 
 void scope_check_var_decls(var_decls_t vds)
@@ -51,7 +52,7 @@ void scope_check_var_decls(var_decls_t vds)
     var_decl_t *vdp = vds.var_decls;
     while (!ast_list_is_empty((void*)vdp)) //could be changed to vdp != NULL
     { 
-	    scope_check_varDecl(*vdp);
+	    scope_check_var_decl(*vdp);
 	    vdp = vdp->next;
     }
 }
@@ -247,9 +248,10 @@ void scope_check_ident_expr(ident_t id)
 
 id_use *scope_check_ident_declared(file_location floc, const char *name)
 {
-    id_use *ret = symtab_lookup(name);
-    if (ret == NULL) {
-	bail_with_prog_error(floc, "identifier \"%s\" is not declared!", name);
+    id_use *ret = lookup(name);
+    if (ret == NULL) 
+    {
+	    bail_with_prog_error(floc, "identifier \"%s\" is not declared!", name);
     }
     return ret;
 }

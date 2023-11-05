@@ -25,8 +25,7 @@ typedef struct scope_s {
     unsigned int size;
     // num. of associations in this scope
     unsigned int loc_count;
-    scope_assoc_t
-                *entries[MAX_SCOPE_SIZE];
+    scope_assoc_t *entries[MAX_SCOPE_SIZE];
 } scope_t;
 
 // Allocate a fresh scope symbol table and return (a pointer to) it.

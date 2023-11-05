@@ -1,6 +1,8 @@
 #include "symtab.h"
 
-typedef struct
+#define MAX_SCOPE_SIZE 4096
+
+typedef struct 
 {
     const char *id;
     id_attrs *attrs;
@@ -40,15 +42,6 @@ bool full()
     return size() >= MAX_SCOPE_SIZE;
 }
 
-bool declared(const char * name)
-{
-    if(lookup(name) == NULL)
-    {
-        return false;
-    }
-    return true;
-}
-
 id_use * lookup(const char * name)
 {
     for(int i = 0; i < size(); i++)
@@ -60,6 +53,16 @@ id_use * lookup(const char * name)
     }
     return NULL;
 }
+
+bool declared(const char * name)
+{
+    if(lookup(name) == NULL)
+    {
+        return false;
+    }
+    return true;
+}
+
 
 bool declared_in_current_scope(const char * name)
 {
@@ -83,12 +86,12 @@ void insert(const char * name, id_attrs * attrs)
     symtab->size++;
 }
 
-void enter_scope()
+void symtab_enter_scope()
 {
     symtab->current_scope++;
 }
 
-void leave_scope()
+void symtab_leave_scope()
 {
     while(size() > 0 && lookup(symtab->entries[size() - 1]->id)->levelsOutward == symtab->current_scope)
     {

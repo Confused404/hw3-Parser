@@ -9,8 +9,7 @@
 #include "id_attrs.h"
 #include "id_use.h"
 #include "utilities.h"
-
-#define MAX_SCOPE_SIZE 4096
+#include "scope.h"
  
 extern void symtab_initialize();
 
@@ -26,8 +25,8 @@ extern bool declared_in_current_scope(const char * name);
 
 extern void insert(const char * name, id_attrs * attrs);
 
-extern void enter_scope();
+extern void symtab_enter_scope();
 
-extern void leave_scope();
+extern void symtab_leave_scope();
 
 #endif
