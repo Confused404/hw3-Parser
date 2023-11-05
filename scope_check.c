@@ -2,9 +2,9 @@
 
 void scope_check_program(block_t prog)
 {
-    enter_scope();
+    symtab_enter_scope();
     scope_check_block(prog);
-    leave_scope();
+    symtab_leave_scope();
 }
 
 void scope_check_block(block_t blk)
@@ -89,10 +89,10 @@ void scope_check_proc_decls(proc_decls_t pds)
 
 void scope_check_proc_decl(proc_decl_t pd)
 {
-    enter_scope();
+    symtab_enter_scope();
     scope_check_ident_declared(*(pd.file_loc), pd.name);
     scope_check_block(*pd.block);
-    leave_scope();
+    symtab_leave_scope();
 }
 
 void scope_check_stmts(stmts_t stmts)

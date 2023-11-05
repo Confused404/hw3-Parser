@@ -1,0 +1,4 @@
+var x;
+skip
+.
+hw3-asttestC.pl0: line 2 identifier "x" is not declared!

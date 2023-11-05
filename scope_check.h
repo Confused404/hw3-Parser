@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "ast.h"
-#include "symtab.c"
+#include "symtab.h"
 #include "id_attrs.h"
 #include "id_use.h"
 #include "utilities.h"

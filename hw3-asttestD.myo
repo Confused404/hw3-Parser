@@ -1,0 +1,4 @@
+const x = 10;
+skip
+.
+hw3-asttestD.pl0: line 2 identifier "x" is not declared!

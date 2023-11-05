@@ -1,0 +1,4 @@
+var x;
+x := 25
+.
+hw3-testA.pl0: line 2 identifier "x" is not declared!

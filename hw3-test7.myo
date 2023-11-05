@@ -1,0 +1,4 @@
+var x, aLongOne, ALongerOne;
+x := aLongOne
+.
+hw3-test7.pl0: line 1 identifier "x" is not declared!

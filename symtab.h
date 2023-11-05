@@ -9,8 +9,22 @@
 #include "id_attrs.h"
 #include "id_use.h"
 #include "utilities.h"
-#include "scope.h"
  
+#define MAX_SCOPE_SIZE 4096
+
+typedef struct 
+{
+    const char *id;
+    id_attrs *attrs;
+} symtab_assoc_t;
+
+typedef struct scope_symtab_s
+{
+    unsigned int size;
+    unsigned int current_scope;
+    symtab_assoc_t *entries[MAX_SCOPE_SIZE];
+} scope_symtab_t;
+
 extern void symtab_initialize();
 
 extern int size();
