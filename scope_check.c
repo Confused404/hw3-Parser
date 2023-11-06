@@ -142,8 +142,7 @@ void scope_check_stmt(stmt_t stmt)
 void scope_check_assign_stmt(assign_stmt_t stmt)
 {
     const char *name = stmt.name;
-    id_use *idu = scope_check_ident_declared(*(stmt.file_loc), name);
-    assert(idu != NULL);
+    scope_check_ident_declared(*(stmt.file_loc), name);
     scope_check_expr(*(stmt.expr));
 }
 
@@ -246,14 +245,13 @@ void scope_check_ident_expr(ident_t id)
     scope_check_ident_declared(*(id.file_loc), id.name);
 }
 
-id_use *scope_check_ident_declared(file_location floc, const char *name)
+void scope_check_ident_declared(file_location floc, const char *name)
 {
-    id_use *ret = lookup(name);
-    if (ret == NULL) 
+    //id_use *ret = symtab_lookup(name);
+    if (!symtab_declared(name)) 
     {
 	    bail_with_prog_error(floc, "identifier \"%s\" is not declared!", name);
     }
-    return ret;
 }
 
 

@@ -67,6 +67,6 @@ extern void scope_check_bin_op_expr(binary_op_expr_t exp);
 
 extern void scope_check_ident_expr(ident_t id);
 
-extern id_use *scope_check_ident_declared(file_location floc, const char *name);
+extern void scope_check_ident_declared(file_location floc, const char *name);
 
 #endif
