@@ -92,7 +92,7 @@ $(PL0)_lexer.c: $(PL0)_lexer.l $(PL0).tab.h
 	$(LEX) $(LEXFLAGS) $<
 
 $(PL0)_lexer.o: $(PL0)_lexer.c ast.h utilities.h file_location.h
-	$(CC) $(CFLAGS) -Wno-unused-but-set-variable -c $(PL0)_lexer.c
+	$(CC) $(CFLAGS) -Wno-unused-function -Wno-unused-but-set-variable -c $(PL0)_lexer.c
 
 $(LEXER): $(LEXER_OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $@
