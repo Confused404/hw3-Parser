@@ -43,8 +43,9 @@ void scope_check_const_defs(const_defs_t cdfs)
 
 void scope_check_const_def(const_def_t cdf)
 {
-    scope_check_ident_expr(cdf.ident);
-    //might need to scope check number
+
+    scope_check_declare_ident(cdf.ident, constant_idk);
+    // do i need another scope_check function here?
 }
 
 void scope_check_var_decls(var_decls_t vds)
@@ -59,22 +60,30 @@ void scope_check_var_decls(var_decls_t vds)
 
 void scope_check_var_decl(var_decl_t vd)
 {
-    scope_check_idents(vd.idents);
+    scope_check_idents(vd.idents, variable_idk);
 }
 
-void scope_check_idents(idents_t idents) 
+void scope_check_idents(idents_t idents, id_kind kind) //I think this might be wrong
 {
     ident_t *idp = idents.idents;
     while (!ast_list_is_empty((void*)idp)) //could be changed to idp != NULL
     { 
-        scope_check_declare_ident(*idp);
+        scope_check_declare_ident(*idp, kind);
         idp = idp->next;
     }
 }
 
-void scope_check_declare_ident(ident_t id) 
+void scope_check_declare_ident(ident_t id, id_kind kind)
 {
-    scope_check_ident_declared(*(id.file_loc), id.name);
+    if (symtab_declared_in_current_scope(id.name)) {
+	    bail_with_prog_error(*(id.file_loc), "%s \"%s\" is already declared as a %s", kind2str(kind), id.name, kind2str(symtab_lookup(id.name)->attrs->kind));
+    }
+    else 
+    {
+	    int ofst_cnt = symtab_scope_loc_count();
+	    id_attrs *attrs = create_id_attrs(*(id.file_loc), kind, ofst_cnt);
+	    symtab_insert(id.name, attrs);
+    }
 }
 
 void scope_check_proc_decls(proc_decls_t pds)
@@ -89,8 +98,11 @@ void scope_check_proc_decls(proc_decls_t pds)
 
 void scope_check_proc_decl(proc_decl_t pd)
 {
+    ident_t temp = ast_ident(pd.file_loc, pd.name);
+    scope_check_declare_ident(temp, procedure_idk);
     symtab_enter_scope();
-    scope_check_ident_declared(*(pd.file_loc), pd.name);
+    // the grammer says there shoul be an ident but there is none in the struct
+    //scope_check_declare_ident(pd.name, procedure_idk);
     scope_check_block(*pd.block);
     symtab_leave_scope();
 }
@@ -204,14 +216,8 @@ void scope_check_odd_condition(odd_condition_t cond)
 
 void scope_check_rel_op_condition(rel_op_condition_t cond)
 {
-    scope_check_token(cond.rel_op);
     scope_check_expr(cond.expr1);
     scope_check_expr(cond.expr2);
-}
-
-void scope_check_token(token_t token)
-{
-    scope_check_ident_declared(*(token.file_loc), token.text);
 }
 
 void scope_check_expr(expr_t exp)

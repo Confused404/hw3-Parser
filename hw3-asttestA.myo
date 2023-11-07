@@ -46,4 +46,3 @@ begin
     skip
 end
 .
-hw3-asttestA.pl0: line 2 identifier "a" is not declared!

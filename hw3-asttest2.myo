@@ -5,4 +5,3 @@ begin
   y := x
 end
 .
-hw3-asttest2.pl0: line 2 identifier "x" is not declared!

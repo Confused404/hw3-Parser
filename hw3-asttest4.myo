@@ -23,4 +23,3 @@ begin
     y := ((y / 2) + 3)
 end
 .
-hw3-asttest4.pl0: line 3 identifier "pi" is not declared!

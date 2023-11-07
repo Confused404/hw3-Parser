@@ -5,4 +5,3 @@ var t, u, v;
 var w, x, y, z;
 x := 0
 .
-hw3-asttest8.pl0: line 2 identifier "a" is not declared!

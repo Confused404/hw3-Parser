@@ -16,4 +16,3 @@ begin
   call countDown
 end
 .
-hw3-scope-test2.pl0: line 2 identifier "arg" is not declared!

@@ -101,6 +101,7 @@ id_attrs *scope_lookup(scope_t *s, const char *name)
     // assert(name != NULL);
     // assert(s != NULL);
     // debug_print("Entering scope_lookup for \"%s\"\n", name);
+    
     for (i = 0; i < s->size; i++)
     {
         // assert(s != NULL);

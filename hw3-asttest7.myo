@@ -1,4 +1,3 @@
 var x, aLongOne, ALongerOne;
 x := aLongOne
 .
-hw3-asttest7.pl0: line 1 identifier "x" is not declared!

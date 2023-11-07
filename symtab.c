@@ -103,6 +103,7 @@ static void add_ident(scope_t *s, const char *name, id_attrs *attrs)
 // Requires: symtab_declared_in_current_scope(name) && attrs != NULL.
 // If !symtab_declared_in_current_scope(name), then modify the current scope
 // to add an association from the given name to attrs.
+// !!! this is working correctly, it's not being detected
 void symtab_insert(const char *name, id_attrs *attrs)
 {
     add_ident(symtab[symtab_top_idx], name, attrs);
@@ -131,12 +132,16 @@ void symtab_leave_scope()
 id_use *symtab_lookup(const char *name)
 {
     unsigned int levelsOut = 0;
-    for (int level = symtab_top_idx; 0 <= level; level--) {
-	id_attrs *attrs = scope_lookup(symtab[level], name);
-	if (attrs != NULL) {
-	    return id_use_create(attrs, levelsOut);
-	}
-	levelsOut++;
+    for (int level = symtab_top_idx; 0 <= level; level--) 
+    {
+	    id_attrs *attrs = scope_lookup(symtab[level], name);
+	    if (attrs != NULL) 
+        {
+	        return id_use_create(attrs, levelsOut);
+	    }
+
+	    levelsOut++;
+
     }
     return NULL;
 }
